@@ -15,6 +15,7 @@ describe('page1 Test', async function() {
     await page1.addNewItem('sys');
       total++;
       await page1.checkItem(total);
+    
   })
 
   afterEach(async function() {
