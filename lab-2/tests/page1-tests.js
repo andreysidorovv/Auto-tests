@@ -1,25 +1,59 @@
-const { beforeEach, afterEach} = require('mocha');
-const page1 = require('../pages/page1');
+const assert = require("assert");
+const { Builder, By, Browser } = require("selenium-webdriver");
+let total = 5;
+let remaining = 5;
 
-describe('page1 Test', async function() {
-  
-  beforeEach(async function() {
-    await page1.open();
-  })
-
-  it('opens page1, check all options and add new item', async function() {
-    var total = 5;
+async function func() {
+  let driver = await new Builder().forBrowser(Browser.CHROME).build();
+  try {
+    await driver.get("https://lambdatest.github.io/sample-todo-app/");
+    const header = await driver.findElement(By.xpath("//h2")).getText();
+    assert.equal(header, "LambdaTest Sample App");
+    let text = await driver
+      .findElement(
+        By.xpath(`//span[text()='${remaining} of ${total} remaining']`) 
+      )
+      .getText();
+    assert.equal(text, `${remaining} of ${total} remaining`);   //проверка текста
+    await driver.sleep(2000);
     for (let i = 1; i <= total; i++) {
-      await page1.checkItem(i);
+      await driver.findElement(
+        By.xpath(`//li[${i}]//span[@class='done-false']`) 
+      );
+      await driver.findElement(By.name(`li${i}`)).click();
+      remaining--;
+      await driver.sleep(1000);
+    } 
+    await driver.findElement(By.id("sampletodotext")).sendKeys("Sys");
+    await driver.findElement(By.id("addbutton")).click();
+    total++;
+    remaining++; 
+    await driver.sleep(2000);
+    await driver.findElement(By.name(`li6`)).click();
+    remaining--;
+    let text1 = await driver
+      .findElement(
+        By.xpath(`//span[text()='${remaining} of ${total} remaining']`)
+      )
+      .getText();
+    assert.equal(text1, `${remaining} of ${total} remaining`);
+    remaining--; 
+    await driver.sleep(2000);
+    let text2 = await driver
+      .findElement(
+        By.xpath(`//span[text()='${remaining} of ${total} remaining']`)
+      )
+      .getText();
+    assert.equal(text2, `${remaining} of ${total} remaining`); 
+    await driver.sleep(2000);
+  } 
+  catch (err) {
+    driver.takeScreenshot().then(function (image) {
+      require('fs').writeFileSync('screenshot_err.png', image, 'base64')
+    });
     }
-    await page1.addNewItem('sys');
-      total++;
-      await page1.checkItem(total);
-    
-  })
-
-  afterEach(async function() {
-    await page1.closeBrowser();
-  })
-  
-})
+  finally {
+    await driver.quit();
+  }
+}
+func();
