@@ -1,0 +1,13 @@
+                                          Практическое задание по составлению xpath
+
+Сидоров Андрей Олегович
+221-323
+
+Задания:
+xpath: //div[@data-test-id="option_input"]//input[@type='text' and @placeholder='Начните вводить']
+
+xpath: //span[@data-text='Сбросить фильтры’]/ancestor::button
+
+xpath: //button[@type= ‘button’ and tabindex=‘1’]//following-sibling::button
+
+xpath: //div[@contains(text(), 'Работа по стратегии’]//preceding-sibling::div//button[@role='switch']
